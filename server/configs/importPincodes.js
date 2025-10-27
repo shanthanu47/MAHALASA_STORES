@@ -1,4 +1,3 @@
-import XLSX from 'xlsx';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import Pincode from '../models/Pincode.js';
@@ -8,6 +7,16 @@ const __dirname = path.dirname(__filename);
 
 export const importPincodesFromExcel = async () => {
     try {
+        // Lazy-load the optional 'xlsx' dependency only when this function is called.
+        // This avoids a startup-time crash if 'xlsx' is not installed on the server.
+        let XLSX;
+        try {
+            const mod = await import('xlsx');
+            XLSX = mod && mod.default ? mod.default : mod;
+        } catch (err) {
+            throw new Error("Optional dependency 'xlsx' is not installed. Install it to use the pincode import endpoint.");
+        }
+
         // Path to the Excel file (assuming it's in the root directory)
         const excelFilePath = path.join(__dirname, '../../pincode.xlsx');
 
