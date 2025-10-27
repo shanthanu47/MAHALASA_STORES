@@ -1,0 +1,115 @@
+.invoice-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.invoice-content {
+    background-color: white;
+    padding: 2rem;
+    border-radius: 8px;
+    width: 80%;
+    max-width: 800px;
+    max-height: 90vh;
+    overflow-y: auto;
+}
+
+.invoice-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid #ccc;
+    padding-bottom: 1rem;
+    margin-bottom: 1rem;
+}
+
+.logo {
+    width: 150px;
+}
+
+.website-details {
+    text-align: right;
+}
+
+.customer-details,
+.order-details {
+    margin-bottom: 1rem;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 1rem;
+}
+
+th,
+td {
+    border: 1px solid #ccc;
+    padding: 0.5rem;
+    text-align: left;
+}
+
+.invoice-total {
+    text-align: right;
+    font-size: 1.2rem;
+    margin-top: 1rem;
+}
+
+.invoice-buttons {
+    display: flex;
+    justify-content: flex-end;
+    gap: 1rem;
+    margin-top: 2rem;
+}
+
+.print-btn,
+.close-btn {
+    padding: 0.5rem 1rem;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.print-btn {
+    background-color: #4FBF8B;
+    color: white;
+}
+
+.close-btn {
+    background-color: #ccc;
+}
+
+@media print {
+    body * {
+        visibility: hidden;
+    }
+
+    .invoice-content,
+    .invoice-content * {
+        visibility: visible;
+    }
+
+    .invoice-content {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 100%;
+        max-width: 100%;
+        padding: 0;
+        border: none;
+        border-radius: 0;
+        max-height: none;
+        overflow: visible;
+    }
+
+    .invoice-buttons {
+        display: none;
+    }
+}
