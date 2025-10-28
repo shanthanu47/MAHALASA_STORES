@@ -52,3 +52,4 @@ temp/
 # Optional: lockfile for pnpm (if using pnpm) - keep if you want to track it
 # .pnp.*
 
+.github
