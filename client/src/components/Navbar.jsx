@@ -26,6 +26,24 @@ const Navbar = () => {
         
     }
 
+    const deleteAccount = async ()=>{
+      if (!window.confirm('Are you sure you want to delete your account? This action cannot be undone and all your data will be permanently deleted.')) {
+        return;
+      }
+      try {
+        const { data } = await axios.post('/api/user/delete-account')
+        if(data.success){
+          toast.success(data.message)
+          setUser(null);
+          navigate('/')
+        }else{
+          toast.error(data.message)
+        }
+      } catch (error) {
+        toast.error(error.message)
+      }
+    }
+
     // Debounce search input
     useEffect(() => {
         const timeoutId = setTimeout(() => {
@@ -172,9 +190,10 @@ const Navbar = () => {
         (
           <div className='relative group'>
             <img src={assets.profile_icon} className='w-10' alt="" />
-            <ul className='hidden group-hover:block absolute top-10 right-0 bg-white shadow border border-gray-200 py-2.5 w-30 rounded-md text-sm z-40'>
+            <ul className='hidden group-hover:block absolute top-10 right-0 bg-white shadow border border-gray-200 py-2.5 w-36 rounded-md text-sm z-40'>
               <li onClick={()=> navigate("my-orders")} className='p-1.5 pl-3 hover:bg-primary/10 cursor-pointer'>My Orders</li>
               <li onClick={logout} className='p-1.5 pl-3 hover:bg-primary/10 cursor-pointer'>Logout</li>
+              <li onClick={deleteAccount} className='p-1.5 pl-3 hover:bg-red-50 text-red-600 cursor-pointer border-t border-gray-200'>Delete Account</li>
             </ul>
           </div>
         )}
@@ -234,9 +253,17 @@ const Navbar = () => {
           Login
         </button>
         ) : (
-          <button onClick={logout} className="cursor-pointer px-6 py-2 mt-2 bg-primary hover:bg-primary-dull transition text-white rounded-full text-sm">
-          Logout
-        </button>
+          <>
+            <button onClick={logout} className="cursor-pointer px-6 py-2 mt-2 bg-primary hover:bg-primary-dull transition text-white rounded-full text-sm">
+            Logout
+            </button>
+            <button onClick={()=>{
+              setOpen(false);
+              deleteAccount();
+            }} className="cursor-pointer px-6 py-2 bg-red-500 hover:bg-red-600 transition text-white rounded-full text-sm">
+            Delete Account
+            </button>
+          </>
         )}
         
       </div>

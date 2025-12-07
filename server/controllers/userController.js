@@ -100,3 +100,29 @@ export const logout = async (req, res)=>{
         res.json({ success: false, message: error.message });
     }
 }
+
+// Delete Account : /api/user/delete-account
+export const deleteAccount = async (req, res)=>{
+    try {
+        const { userId } = req.body;
+        
+        // Delete user account and all associated data
+        const user = await User.findByIdAndDelete(userId);
+        
+        if (!user) {
+            return res.json({ success: false, message: "User not found" });
+        }
+        
+        // Clear authentication cookie
+        res.clearCookie('token', {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === 'production',
+            sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'strict',
+        });
+        
+        return res.json({ success: true, message: "Account deleted successfully" });
+    } catch (error) {
+        console.log(error.message);
+        res.json({ success: false, message: error.message });
+    }
+}

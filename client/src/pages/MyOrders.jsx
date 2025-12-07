@@ -7,27 +7,45 @@ import toast from 'react-hot-toast'
 const MyOrders = () => {
 
     const [myOrders, setMyOrders] = useState([])
+    const [activeTab, setActiveTab] = useState("Ongoing")
     const {currency, axios, user} = useAppContext()
 
     const fetchMyOrders = async ()=>{
         try {
+            console.log('Fetching user orders...');
             const { data } = await axios.get('/api/order/user')
+            console.log('Orders response:', data);
             if(data.success){
                 console.log("Orders received:", data.orders);
-                // Log first order structure for debugging
-                if(data.orders.length > 0) {
-                    console.log("First order structure:", data.orders[0]);
-                    console.log("Amount fields:", {
-                        amount: data.orders[0].amount,
-                        amounts: data.orders[0].amounts
-                    });
-                }
                 setMyOrders(data.orders)
+            } else {
+                toast.error(data.message);
+                console.error('Failed to fetch orders:', data.message);
             }
         } catch (error) {
-            console.log(error);
+            console.error('Error fetching orders:', error);
+            toast.error(error.response?.data?.message || error.message);
         }
     }
+
+    // Filter orders based on status
+    const getOrdersByCategory = (category) => {
+        if (category === "Ongoing") {
+            return myOrders.filter(order => 
+                order.status !== "Delivered" && order.status !== "Cancelled" && order.status !== "Trash"
+            ).sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+        } else if (category === "Delivered") {
+            return myOrders.filter(order => order.status === "Delivered")
+                .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+        }
+        return [];
+    }
+
+    const getOrderCount = (category) => {
+        return getOrdersByCategory(category).length;
+    }
+
+    const filteredOrders = getOrdersByCategory(activeTab);
 
     const downloadInvoice = (order) => {
         try {
@@ -78,14 +96,71 @@ const MyOrders = () => {
             <p className='text-2xl font-medium uppercase'>My orders</p>
             <div className='w-16 h-0.5 bg-primary rounded-full'></div>
         </div>
-        {myOrders.map((order, index)=>(
+
+        {/* Category Tabs */}
+        <div className="mb-6 flex gap-4 justify-center md:justify-start max-w-4xl mx-auto">
+            <button
+                onClick={() => setActiveTab("Ongoing")}
+                className={`px-6 py-2.5 rounded-lg font-medium transition-all ${
+                    activeTab === "Ongoing"
+                        ? 'bg-primary text-white shadow-md'
+                        : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                }`}
+            >
+                Ongoing
+                <span className={`ml-2 px-2 py-0.5 rounded-full text-xs ${
+                    activeTab === "Ongoing" 
+                        ? 'bg-white/20' 
+                        : 'bg-gray-300'
+                }`}>
+                    {getOrderCount("Ongoing")}
+                </span>
+            </button>
+            <button
+                onClick={() => setActiveTab("Delivered")}
+                className={`px-6 py-2.5 rounded-lg font-medium transition-all ${
+                    activeTab === "Delivered"
+                        ? 'bg-primary text-white shadow-md'
+                        : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                }`}
+            >
+                Delivered
+                <span className={`ml-2 px-2 py-0.5 rounded-full text-xs ${
+                    activeTab === "Delivered" 
+                        ? 'bg-white/20' 
+                        : 'bg-gray-300'
+                }`}>
+                    {getOrderCount("Delivered")}
+                </span>
+            </button>
+        </div>
+
+        {filteredOrders.length === 0 ? (
+            <div className="text-center py-12 bg-gray-50 rounded-lg max-w-4xl mx-auto">
+                <p className='text-gray-500'>No {activeTab.toLowerCase()} orders found</p>
+            </div>
+        ) : (
+        filteredOrders.map((order, index)=>(
             <div key={index} className='border border-gray-300 rounded-lg mb-6 p-3 md:p-4 md:py-5 w-full max-w-4xl mx-auto'>
                 {/* Order Header - Mobile Responsive */}
                 <div className='flex flex-col gap-3 mb-4'>
-                    <div className='flex flex-col sm:flex-row sm:items-center gap-2 text-gray-600 text-sm'>
-                        <span className='font-medium'>OrderId: <span className='font-normal break-all'>{order._id}</span></span>
-                        <span>Payment: {order.paymentType}</span>
-                        <span className='font-medium text-primary'>Total: Rs.{order.amounts?.totalAmount || (order.amount + (order.amounts?.deliveryCost || 0))}</span>
+                    <div className='flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 text-gray-600 text-sm'>
+                        <div className='flex flex-wrap items-center gap-2'>
+                            <span className='font-medium'>OrderId: <span className='font-normal break-all'>{order._id}</span></span>
+                            <span className={`px-2 py-1 rounded-full text-xs font-medium ${
+                                order.status === "Delivered" 
+                                    ? 'bg-green-100 text-green-700' 
+                                    : order.status === "Cancelled"
+                                    ? 'bg-red-100 text-red-700'
+                                    : 'bg-blue-100 text-blue-700'
+                            }`}>
+                                {order.status}
+                            </span>
+                        </div>
+                        <div className='flex flex-wrap items-center gap-2'>
+                            <span>Payment: {order.paymentType}</span>
+                            <span className='font-medium text-primary'>Total: Rs.{order.totalAmount || order.amount}</span>
+                        </div>
                     </div>
                     <button
                         onClick={() => downloadInvoice(order)}
@@ -107,20 +182,19 @@ const MyOrders = () => {
                       {/* Product Info */}
                       <div className='flex items-start gap-3 mb-3'>
                         <div className='bg-primary/10 p-2 rounded-lg flex-shrink-0'>
-                         <img src={item.product.image[0]} alt="" className='w-12 h-12 md:w-16 md:h-16 object-cover rounded' />
+                         <img src={item.product?.image?.[0] || '/placeholder.png'} alt="" className='w-12 h-12 md:w-16 md:h-16 object-cover rounded' />
                          </div>
                          <div className='flex-1 min-w-0'>
-                            <h3 className='text-base md:text-lg font-medium text-gray-800 mb-1'>{item.product.name}</h3>
-                            <p className='text-sm text-gray-500 mb-2'>Category: {item.product.category}</p>
+                            <h3 className='text-base md:text-lg font-medium text-gray-800 mb-1'>{item.product?.name || 'Product Unavailable'}</h3>
+                            <p className='text-sm text-gray-500 mb-2'>Category: {item.product?.category || 'N/A'}</p>
                             <div className='grid grid-cols-2 gap-2 text-sm text-gray-600'>
                                 <span>Qty: {item.quantity || "1"}</span>
-                                <span>Status: {order.status}</span>
-                                <span className='col-span-2'>Date: {new Date(order.createdAt).toLocaleDateString()}</span>
+                                <span className='col-span-2'>Order Date: {new Date(order.createdAt).toLocaleDateString()}</span>
                             </div>
                          </div>
                          <div className='text-right flex-shrink-0'>
                             <p className='text-primary text-base md:text-lg font-medium'>
-                                Rs.{item.product.offerPrice * item.quantity}
+                                Rs.{(item.product?.offerPrice || 0) * item.quantity}
                             </p>
                          </div>
                        </div>
@@ -128,7 +202,8 @@ const MyOrders = () => {
                     </div>
                 ))}
             </div>
-        ))}
+        ))
+        )}
       
     </div>
   )

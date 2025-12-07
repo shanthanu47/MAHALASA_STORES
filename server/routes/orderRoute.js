@@ -4,7 +4,10 @@ import {
     placeOrderOnline,
     getUserOrders,
     createRazorpayOrder,
-    getAllOrders
+    getAllOrders,
+    updateOrderStatus,
+    deleteOrder,
+    permanentDeleteOrder
 } from '../controllers/orderController.js';
 import authSeller from '../middlewares/authSeller.js';
 
@@ -18,5 +21,8 @@ orderRouter.post('/create-razorpay-order', authUser, createRazorpayOrder);
 
 // Seller Routes
 orderRouter.get('/seller', authSeller, getAllOrders);
+orderRouter.post('/status', authSeller, updateOrderStatus);
+orderRouter.post('/delete', authSeller, deleteOrder);
+orderRouter.post('/permanent-delete', authSeller, permanentDeleteOrder);
 
 export default orderRouter;

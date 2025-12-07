@@ -18,6 +18,24 @@ const ProductList = () => {
             toast.error(error.message)
         }
     }
+
+    const deleteProduct = async (id)=>{
+        if (!window.confirm('Are you sure you want to delete this product?')) {
+            return;
+        }
+        try {
+            const { data } = await axios.post('/api/product/delete', {id});
+            if (data.success){
+                fetchProducts();
+                toast.success(data.message)
+            }else{
+                toast.error(data.message)
+            }
+        } catch (error) {
+            toast.error(error.message)
+        }
+    }
+
   return (
     <div className="no-scrollbar flex-1 h-[95vh] overflow-y-scroll flex flex-col justify-between">
             <div className="w-full md:p-10 p-4">
@@ -30,6 +48,7 @@ const ProductList = () => {
                                 <th className="px-4 py-3 font-semibold truncate">Category</th>
                                 <th className="px-4 py-3 font-semibold truncate hidden md:block">Selling Price</th>
                                 <th className="px-4 py-3 font-semibold truncate">In Stock</th>
+                                <th className="px-4 py-3 font-semibold truncate">Action</th>
                             </tr>
                         </thead>
                         <tbody className="text-sm text-gray-500">
@@ -49,6 +68,14 @@ const ProductList = () => {
                                             <div className="w-12 h-7 bg-slate-300 rounded-full peer peer-checked:bg-blue-600 transition-colors duration-200"></div>
                                             <span className="dot absolute left-1 top-1 w-5 h-5 bg-white rounded-full transition-transform duration-200 ease-in-out peer-checked:translate-x-5"></span>
                                         </label>
+                                    </td>
+                                    <td className="px-4 py-3">
+                                        <button 
+                                            onClick={() => deleteProduct(product._id)} 
+                                            className="px-3 py-1.5 bg-red-500 hover:bg-red-600 text-white text-sm rounded-md transition-colors duration-200"
+                                        >
+                                            Delete
+                                        </button>
                                     </td>
                                 </tr>
                             ))}

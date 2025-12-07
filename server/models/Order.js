@@ -10,7 +10,7 @@ const orderSchema = new mongoose.Schema({
     deliveryCost: {type: Number, default: 0},
     totalAmount: {type: Number, required: true}, // amount + deliveryCost
     address: {type: String, required: true, ref: 'address'},
-    status: { type: String, default: "Food Processing" },
+    status: { type: String, default: "Order Placed" },
     date: { type: Date, default: Date.now() },
     payment: { type: Boolean, default: false },
     paymentDetails: {

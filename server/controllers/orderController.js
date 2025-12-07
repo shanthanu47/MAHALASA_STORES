@@ -9,13 +9,25 @@ import { calculateDeliveryCost } from "../configs/importPincodes.js";
 // Helper function to calculate order amounts
 const calculateOrderAmounts = async (items, addressId) => {
     // Calculate item total
-    let itemTotal = await items.reduce(async (acc, item) => {
+    let itemTotal = 0;
+    
+    for (const item of items) {
         const product = await Product.findById(item.product);
-        return (await acc) + product.offerPrice * item.quantity;
-    }, 0);
+        if (!product) {
+            throw new Error(`Product not found for ID: ${item.product}`);
+        }
+        if (!product.inStock) {
+            throw new Error(`Product "${product.name}" is currently out of stock`);
+        }
+        itemTotal += product.offerPrice * item.quantity;
+    }
 
     // Get delivery cost
     const address = await Address.findById(addressId);
+    if (!address) {
+        throw new Error('Delivery address not found');
+    }
+    
     let deliveryCost = 0;
     let totalAmount = itemTotal;
 
@@ -123,10 +135,22 @@ export const placeOrderOnline = async (req, res) => {
 export const getUserOrders = async (req, res)=>{
     try {
         const userId = req.body.userId;
+        console.log('Fetching orders for user:', userId);
         const orders = await Order.find({
             userId,
             isPaid: true
-        }).populate("items.product address").sort({createdAt: -1});
+        })
+        .populate({
+            path: 'items.product',
+            select: 'name image offerPrice price category'
+        })
+        .populate({
+            path: 'address',
+            select: 'firstName lastName street city state zipcode country phone'
+        })
+        .sort({createdAt: -1});
+        
+        console.log(`Found ${orders.length} orders for user`);
         res.json({ success: true, orders });
     } catch (error) {
         res.json({ success: false, message: error.message });
@@ -137,10 +161,100 @@ export const getUserOrders = async (req, res)=>{
 // Get All Orders ( for seller / admin) : /api/order/seller
 export const getAllOrders = async (req, res)=>{
     try {
+        console.log('Fetching all orders for seller...');
         const orders = await Order.find({
             isPaid: true
-        }).populate("items.product address").sort({createdAt: -1});
+        })
+        .populate({
+            path: 'items.product',
+            select: 'name image offerPrice category'
+        })
+        .populate({
+            path: 'address',
+            select: 'firstName lastName street city state zipcode country phone'
+        })
+        .sort({createdAt: -1});
+        
+        console.log(`Found ${orders.length} orders`);
         res.json({ success: true, orders });
+    } catch (error) {
+        console.error('Error fetching orders:', error);
+        res.json({ success: false, message: error.message });
+    }
+}
+
+// Update Order Status (for seller / admin) : /api/order/status
+export const updateOrderStatus = async (req, res) => {
+    try {
+        const { orderId, status } = req.body;
+        
+        if (!orderId || !status) {
+            return res.json({ success: false, message: "Order ID and status are required" });
+        }
+
+        const validStatuses = ["Order Placed", "Processing", "Packed", "Dispatched", "Out for Delivery", "Delivered", "Cancelled", "Trash"];
+        
+        if (!validStatuses.includes(status)) {
+            return res.json({ success: false, message: "Invalid status" });
+        }
+
+        const order = await Order.findByIdAndUpdate(
+            orderId,
+            { status },
+            { new: true }
+        );
+
+        if (!order) {
+            return res.json({ success: false, message: "Order not found" });
+        }
+
+        res.json({ success: true, message: "Order status updated", order });
+    } catch (error) {
+        res.json({ success: false, message: error.message });
+    }
+}
+
+// Delete Order (move to trash or permanent delete) : /api/order/delete
+export const deleteOrder = async (req, res) => {
+    try {
+        const { orderId } = req.body;
+        
+        if (!orderId) {
+            return res.json({ success: false, message: "Order ID is required" });
+        }
+
+        const order = await Order.findByIdAndUpdate(
+            orderId,
+            { status: "Trash" },
+            { new: true }
+        );
+
+        if (!order) {
+            return res.json({ success: false, message: "Order not found" });
+        }
+
+        res.json({ success: true, message: "Order moved to trash", order });
+    } catch (error) {
+        res.json({ success: false, message: error.message });
+    }
+}
+
+// Permanently delete order : /api/order/permanent-delete
+export const permanentDeleteOrder = async (req, res) => {
+    try {
+        const { orderId } = req.body;
+        
+        if (!orderId) {
+            return res.json({ success: false, message: "Order ID is required" });
+        }
+
+        const order = await Order.findByIdAndDelete(orderId);
+
+        if (!order) {
+            return res.json({ success: false, message: "Order not found" });
+        }
+
+        res.json({ success: true, message: "Order permanently deleted" });
     } catch (error) {
         res.json({ success: false, message: error.message });
     }

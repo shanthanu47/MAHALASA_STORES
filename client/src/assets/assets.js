@@ -28,6 +28,9 @@ import add_address_iamge from "./add_address_image.svg";
 import organic_vegitable_image from "./organic_vegitable_image.png";
 import fresh_fruits_image from "./fresh_fruits_image.png";
 import bottles_image from "./bottles_image.png";
+import pickles_image from "./PICKLES___CONDIMENTS-removebg-preview.png";
+import sweets_image from "./SWEETS & DESSERTS.png";
+import snacks_image from "./SNACKS & READY-TO-FRY.png";
 import maggi_image from "./maggi_image.png";
 import dairy_product_image from "./dairy_product_image.png";
 import bakery_image from "./bakery_image.png";
@@ -47,6 +50,8 @@ import paneer_image from "./paneer_image.png";
 import orange_image from "./orange_image.png";
 import pepsi_image from "./pepsi_image.png";
 import wheat_flour_image from "./wheat_flour_image.png";
+import spices_image from "./SPICES & SWEETENERS.png";
+import lentils_image from "./LENTILS & BEANS.png";
 import cheese_image from "./cheese_image.png";
 import eggs_image from "./eggs_image.png";
 import spinach_image_1 from "./spinach_image_1.png";
@@ -110,31 +115,31 @@ export const categories = [
   {
     text: "Sweets & Desserts",
     path: "Sweets",
-    image: chocolate_cake_image,
+    image: sweets_image,
     bgColor: "#FEE0E0",
   },
   {
     text: "Snacks & Ready-to-Fry",
     path: "Snacks",
-    image: maggi_image,
+    image: snacks_image,
     bgColor: "#F0F5DE",
   },
   {
     text: "Pickles & Condiments",
     path: "Pickles",
-    image: bottles_image,
+    image: pickles_image,
     bgColor: "#E1F5EC",
   },
   {
     text: "Spices & Sweeteners",
     path: "Spices",
-    image: wheat_flour_image,
+    image: spices_image,
     bgColor: "#FEE6CD",
   },
   {
     text: "Lentils & Beans",
     path: "Lentils",
-    image: basmati_rice_image,
+    image: lentils_image,
     bgColor: "#E0F6FE",
   },
   {

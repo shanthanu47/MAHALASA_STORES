@@ -67,7 +67,12 @@ const AppContextProvider = ({ children }) => {
             const { data } = await axiosInstance.post("/api/cart/add", { product: productId });
             if (data.success) {
                 toast.success(data.message);
-                await getCartProducts();
+                // Update cart immediately from response
+                if (data.cart) {
+                    setCart(data.cart);
+                } else {
+                    await getCartProducts();
+                }
             } else {
                 toast.error(data.message);
             }
@@ -81,12 +86,28 @@ const AppContextProvider = ({ children }) => {
             const { data } = await axiosInstance.post("/api/cart/remove", { product: productId });
             if (data.success) {
                 toast.success(data.message);
-                await getCartProducts();
+                // Update cart immediately from response
+                if (data.cart) {
+                    setCart(data.cart);
+                } else {
+                    await getCartProducts();
+                }
             } else {
                 toast.error(data.message);
             }
         } catch (error) {
             toast.error("Failed to remove from cart");
+        }
+    };
+
+    const clearCart = async () => {
+        try {
+            const { data } = await axiosInstance.post("/api/cart/clear");
+            if (data.success) {
+                setCart({});
+            }
+        } catch (error) {
+            console.error("Failed to clear cart:", error);
         }
     };
 
@@ -106,7 +127,9 @@ const AppContextProvider = ({ children }) => {
     const getCartCount = () => {
         let totalCount = 0;
         for (const item in cart) {
-            totalCount += cart[item];
+            if (cart[item] > 0) {
+                totalCount += cart[item];
+            }
         }
         return totalCount;
     };
@@ -160,9 +183,11 @@ const AppContextProvider = ({ children }) => {
         setIsSeller,
         navigate,
         products,
+        fetchProducts,
         cart,
         addToCart,
         removeFromCart,
+        clearCart,
         getTotalCartAmount,
         getCartCount,
         address,

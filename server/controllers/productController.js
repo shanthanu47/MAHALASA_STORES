@@ -60,3 +60,35 @@ export const changeStock = async (req, res)=>{
         res.json({ success: false, message: error.message })
     }
 }
+
+// Delete Product : /api/product/delete
+export const deleteProduct = async (req, res)=>{
+    try {
+        const { id } = req.body
+        const product = await Product.findById(id)
+        
+        if (!product) {
+            return res.json({ success: false, message: "Product not found" })
+        }
+
+        // Delete images from cloudinary
+        if (product.image && product.image.length > 0) {
+            await Promise.all(
+                product.image.map(async (imageUrl) => {
+                    try {
+                        const publicId = imageUrl.split('/').pop().split('.')[0]
+                        await cloudinary.uploader.destroy(publicId)
+                    } catch (err) {
+                        console.log("Error deleting image from cloudinary:", err.message)
+                    }
+                })
+            )
+        }
+
+        await Product.findByIdAndDelete(id)
+        res.json({success: true, message: "Product Deleted Successfully"})
+    } catch (error) {
+        console.log(error.message);
+        res.json({ success: false, message: error.message })
+    }
+}
