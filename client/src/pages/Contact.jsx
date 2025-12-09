@@ -31,9 +31,9 @@ const Contact = () => {
     // Handle form submission
     const handleSubmit = async (e) => {
         e.preventDefault();
-        
+
         // Validation
-        if (!formData.firstName || !formData.lastName || !formData.email || 
+        if (!formData.firstName || !formData.lastName || !formData.email ||
             !formData.phone || !formData.subject || !formData.message) {
             toast.error('Please fill in all fields');
             return;
@@ -54,7 +54,7 @@ const Contact = () => {
 
         try {
             const { data } = await axios.post('/api/contact/submit', formData);
-            
+
             if (data.success) {
                 toast.success(data.message);
                 // Reset form
@@ -127,32 +127,30 @@ const Contact = () => {
         <div className="px-6 md:px-16 lg:px-24 xl:px-32 py-8">
             {/* Header */}
             <div className="text-center mb-12">
-                <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">Contact Us</h1>
-                <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+                <h1 className="text-3xl md:text-4xl font-serif font-bold text-tulunad-secondary mb-4">Contact Us</h1>
+                <p className="text-lg text-stone-600 max-w-2xl mx-auto font-sans">
                     We're here to help! Get in touch with us for any queries, complaints, or feedback about our services.
                 </p>
             </div>
 
             {/* Tab Navigation */}
             <div className="flex justify-center mb-8">
-                <div className="bg-gray-100 p-1 rounded-lg">
+                <div className="bg-white p-1 rounded-full border border-stone-200 shadow-sm">
                     <button
                         onClick={() => setActiveTab('contact')}
-                        className={`px-6 py-2 rounded-md transition-all ${
-                            activeTab === 'contact'
-                                ? 'bg-primary text-white shadow-md'
-                                : 'text-gray-600 hover:text-primary'
-                        }`}
+                        className={`px-8 py-2.5 rounded-full transition-all font-medium ${activeTab === 'contact'
+                                ? 'bg-tulunad-primary text-white shadow-md'
+                                : 'text-stone-600 hover:text-tulunad-primary'
+                            }`}
                     >
                         Contact Info
                     </button>
                     <button
                         onClick={() => setActiveTab('faq')}
-                        className={`px-6 py-2 rounded-md transition-all ${
-                            activeTab === 'faq'
-                                ? 'bg-primary text-white shadow-md'
-                                : 'text-gray-600 hover:text-primary'
-                        }`}
+                        className={`px-8 py-2.5 rounded-full transition-all font-medium ${activeTab === 'faq'
+                                ? 'bg-tulunad-primary text-white shadow-md'
+                                : 'text-stone-600 hover:text-tulunad-primary'
+                            }`}
                     >
                         FAQs
                     </button>
@@ -174,8 +172,8 @@ const Contact = () => {
                                 <div className="space-y-3">
                                     {contactInfo.names.map((name, index) => (
                                         <div key={index} className="flex items-center">
-                                            <div className="w-2 h-2 bg-primary rounded-full mr-3"></div>
-                                            <span className="text-gray-700 font-medium">{name}</span>
+                                            <div className="w-2 h-2 bg-tulunad-primary rounded-full mr-3"></div>
+                                            <span className="text-stone-700 font-medium">{name}</span>
                                         </div>
                                     ))}
                                 </div>
@@ -338,11 +336,10 @@ const Contact = () => {
                                 <button
                                     type="submit"
                                     disabled={isSubmitting}
-                                    className={`w-full font-medium py-3 px-6 rounded-md transition-colors ${
-                                        isSubmitting 
-                                            ? 'bg-gray-400 cursor-not-allowed' 
+                                    className={`w-full font-medium py-3 px-6 rounded-md transition-colors ${isSubmitting
+                                            ? 'bg-gray-400 cursor-not-allowed'
                                             : 'bg-primary hover:bg-primary-dull text-white'
-                                    }`}
+                                        }`}
                                 >
                                     {isSubmitting ? 'Sending Message...' : 'Send Message'}
                                 </button>
@@ -351,24 +348,24 @@ const Contact = () => {
                     </div>
 
                     {/* Operating Hours */}
-                    <div className="mt-12 bg-gradient-to-r from-primary/10 to-primary/20 p-8 rounded-lg">
+                    <div className="mt-12 bg-gradient-to-r from-tulunad-secondary/5 to-tulunad-secondary/10 p-8 rounded-xl border border-tulunad-secondary/10">
                         <div className="text-center">
-                            <h2 className="text-2xl font-semibold text-gray-900 mb-4">Store Operating Hours</h2>
+                            <h2 className="text-2xl font-serif font-semibold text-tulunad-secondary mb-4">Store Operating Hours</h2>
                             <div className="grid md:grid-cols-3 gap-6 mt-6">
                                 <div className="text-center">
-                                    <h3 className="font-semibold text-gray-900 mb-2">Store Timing</h3>
-                                    <p className="text-gray-700">Monday - Sunday</p>
-                                    <p className="text-primary font-medium">7:00 AM - 11:00 PM</p>
+                                    <h3 className="font-semibold text-tulunad-primary mb-2">Store Timing</h3>
+                                    <p className="text-stone-700">Monday - Sunday</p>
+                                    <p className="text-tulunad-secondary font-medium">7:00 AM - 11:00 PM</p>
                                 </div>
                                 <div className="text-center">
-                                    <h3 className="font-semibold text-gray-900 mb-2">Delivery Hours</h3>
-                                    <p className="text-gray-700">Every Day</p>
-                                    <p className="text-primary font-medium">8:00 AM - 10:00 PM</p>
+                                    <h3 className="font-semibold text-tulunad-primary mb-2">Delivery Hours</h3>
+                                    <p className="text-stone-700">Every Day</p>
+                                    <p className="text-tulunad-secondary font-medium">8:00 AM - 10:00 PM</p>
                                 </div>
                                 <div className="text-center">
-                                    <h3 className="font-semibold text-gray-900 mb-2">Customer Support</h3>
-                                    <p className="text-gray-700">24/7</p>
-                                    <p className="text-primary font-medium">Always Available</p>
+                                    <h3 className="font-semibold text-tulunad-primary mb-2">Customer Support</h3>
+                                    <p className="text-stone-700">24/7</p>
+                                    <p className="text-tulunad-secondary font-medium">Always Available</p>
                                 </div>
                             </div>
                         </div>
@@ -397,9 +394,8 @@ const Contact = () => {
                                         <h3 className="text-lg font-medium text-gray-900 pr-4">
                                             {faq.question}
                                         </h3>
-                                        <div className={`transform transition-transform duration-200 ${
-                                            expandedFAQ === index ? 'rotate-180' : ''
-                                        }`}>
+                                        <div className={`transform transition-transform duration-200 ${expandedFAQ === index ? 'rotate-180' : ''
+                                            }`}>
                                             <svg className="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7"></path>
                                             </svg>

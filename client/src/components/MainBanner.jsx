@@ -16,44 +16,52 @@ const MainBanner = () => {
   }
 
   return (
-    <div className='relative'>
-      <img src={assets.main_banner_bg} alt="banner" className='w-full hidden md:block'/>
-      <img src={assets.main_banner_bg_sm} alt="banner" className='w-full md:hidden'/>
+    <div className='relative w-full md:min-h-[500px] flex flex-col md:flex-row items-center overflow-hidden rounded-2xl my-8 bg-tulunad-secondary/5'>
 
-      <div className='absolute inset-0 flex flex-col items-center md:items-start justify-end md:justify-center pb-24 md:pb-0 px-4 md:pl-18 lg:pl-24'>
-        <h1 className='text-3xl md:text-4xl lg:text-5xl font-bold text-center md:text-left max-w-72 md:max-w-80 lg:max-w-105 leading-tight lg:leading-15'
-        >Freshness You Can Trust, Savings You will Love! </h1>
-        
-        {/* Hero Search Bar */}
-        <form onSubmit={handleSearch} className='mt-4 mb-2 w-full max-w-md'>
-          <div className='flex items-center bg-white rounded-full border-2 border-white shadow-lg'>
+      {/* Decorative Background Elements */}
+      <div className="absolute top-0 right-0 w-64 h-64 bg-tulunad-primary/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2"></div>
+      <div className="absolute bottom-0 left-0 w-96 h-96 bg-tulunad-secondary/10 rounded-full blur-3xl translate-y-1/2 -translate-x-1/2"></div>
+
+      {/* Left Content */}
+      <div className='relative z-10 w-full md:w-1/2 flex flex-col items-center md:items-start justify-center p-8 md:p-16 lg:p-24 text-center md:text-left'>
+        <span className="text-tulunad-primary font-medium tracking-widest text-sm uppercase mb-4">Authentic Flavors of Tulunad</span>
+        <h1 className='text-4xl md:text-5xl lg:text-6xl font-serif font-bold text-tulunad-secondary leading-tight mb-6'>
+          Bring the Coast <br /> <span className="text-tulunad-primary italic">Home.</span>
+        </h1>
+        <p className="text-gray-600 max-w-md mb-8 text-lg">
+          Handpicked spices, grains, and essentials from Udupi, Mangalore, and Kundapura. Delivered fresh to your door.
+        </p>
+
+        {/* Search Bar */}
+        <form onSubmit={handleSearch} className='w-full max-w-md relative'>
+          <div className='flex items-center bg-white rounded-full border border-stone-200 shadow-lg hover:shadow-xl transition-shadow p-1.5 focus-within:border-tulunad-primary/50'>
             <input
               type="text"
               value={searchInput}
               onChange={(e) => setSearchInput(e.target.value)}
-              placeholder="Search for fresh groceries..."
-              className="flex-1 px-4 py-3 rounded-l-full outline-none text-gray-700 placeholder-gray-500"
+              placeholder="Search for 'Kori Rotti'..."
+              className="flex-1 px-5 py-3 rounded-full outline-none text-gray-700 placeholder-gray-400 font-sans"
             />
             <button
               type="submit"
-              className="bg-primary hover:bg-primary-dull px-6 py-3 rounded-r-full transition-colors"
+              className="bg-tulunad-secondary hover:bg-green-900 w-12 h-12 flex items-center justify-center rounded-full transition-colors text-white"
             >
-              <img src={assets.search_icon} alt="search" className="w-5 h-5 filter invert" />
+              <img src={assets.search_icon} alt="search" className="w-5 h-5 filter invert opacity-90" />
             </button>
           </div>
         </form>
 
-      <div className='flex items-center mt-6 font-medium'>
-        <Link to={"/products"} className='group flex items-center gap-2 px-7 md:px-9 py-3 bg-primary hover:bg-primary-dull transition rounded text-white cursor-pointer'>
-        Shop now
-        <img className='md:hidden transition group-focus:translate-x-1' src={assets.white_arrow_icon} alt="arrow" />
-        </Link>
-
-        <Link to={"/products"} className='group hidden md:flex items-center gap-2 px-9 py-3 cursor-pointer'>
-        Explore deals
-        <img className='transition group-hover:translate-x-1' src={assets.black_arrow_icon} alt="arrow" />
-        </Link>
+        <div className='flex items-center gap-4 mt-8'>
+          <Link to={"/products"} className="text-tulunad-secondary font-medium hover:text-tulunad-primary transition underline underline-offset-4 decoration-2 decoration-tulunad-primary/30 hover:decoration-tulunad-primary">
+            Explore Collections
+          </Link>
+        </div>
       </div>
+
+      {/* Right Image */}
+      <div className='relative w-full md:w-1/2 h-64 md:h-full min-h-[400px]'>
+        <img src={assets.main_banner_bg} alt="Coastal Karnataka" className='w-full h-full object-cover hidden md:block mask-image-gradient' style={{ clipPath: 'polygon(10% 0, 100% 0, 100% 100%, 0% 100%)' }} />
+        <img src={assets.main_banner_bg_sm} alt="Coastal Karnataka" className='w-full h-full object-cover md:hidden' />
       </div>
     </div>
   )

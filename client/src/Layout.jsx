@@ -12,7 +12,7 @@ const Layout = () => {
     const { showUserLogin } = useAppContext();
 
     return (
-        <div className='text-default min-h-screen text-gray-700 bg-white'>
+        <div className='text-default min-h-screen text-gray-700 bg-tulunad-cream font-sans'>
 
             {
                 !isSellerPath && <Navbar />

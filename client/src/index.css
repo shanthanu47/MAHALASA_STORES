@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@100..900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@100..900&family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap');
 
 @import "tailwindcss";
 
@@ -6,9 +6,24 @@
   font-family: "Outfit", sans-serif;
 }
 
+h1, h2, h3, h4, h5, h6, .font-serif {
+  font-family: "Playfair Display", serif;
+}
+
 @theme {
-  --color-primary: #4fbf8b;
-  --color-primary-dull: #44ae7c;
+  /* Tulunad Palette */
+  --color-tulunad-primary: #9C4221; /* Terracotta / Red Mud */
+  --color-tulunad-secondary: #2C5530; /* Deep Forest Green */
+  --color-tulunad-accent: #D4A373; /* Sand / Brass */
+  --color-tulunad-cream: #FAF9F6; /* Off-white / Paper */
+  --color-tulunad-surface: #FFFFFF;
+  
+  /* Mapping to existing variables if needed for backward compatibility during transition */
+  --color-primary: var(--color-tulunad-primary);
+  --color-primary-dull: var(--color-tulunad-secondary);
+  
+  --font-serif: "Playfair Display", serif;
+  --font-sans: "Outfit", sans-serif;
 }
 
 .no-scrollbar::-webkit-scrollbar{

@@ -35,7 +35,7 @@ const Cart = () => {
             navigate("/add-address");
             return;
         }
-        
+
         // Fetch order details with delivery charges
         setIsLoadingOrder(true);
         const orderItems = Object.keys(cart).map((key) => ({
@@ -94,7 +94,7 @@ const Cart = () => {
 
     const placeOrderWithSummary = async () => {
         if (!orderSummary) return;
-        
+
         const orderItems = Object.keys(cart).map((key) => ({
             product: key,
             quantity: cart[key],
@@ -105,7 +105,7 @@ const Cart = () => {
                 toast.error("Razorpay configuration error. Please contact support.");
                 return;
             }
-            
+
             const options = {
                 key: import.meta.env.VITE_RAZORPAY_KEY_ID,
                 amount: orderSummary.razorpayAmount,
@@ -113,79 +113,79 @@ const Cart = () => {
                 name: "Mahalasa Stores",
                 description: "Order Payment",
                 order_id: orderSummary.razorpayOrderId,
-                    handler: async (response) => {
-                        try {
-                            const { data } = await axios.post(
-                                "/api/order/online",
-                                {
-                                    userId: user._id,
-                                    items: orderItems,
-                                    address: address._id,
-                                    paymentDetails: {
-                                        razorpay_payment_id: response.razorpay_payment_id,
-                                        razorpay_order_id: response.razorpay_order_id,
-                                        razorpay_signature: response.razorpay_signature,
-                                    },
-                                }
-                            );
-
-                            if (data.success) {
-                                // Clear cart on successful order
-                                await clearCart();
-                                
-                                toast.success(data.message);
-                                
-                                // Generate and download invoice PDF
-                                try {
-                                    const orderForPDF = {
-                                        _id: data.orderId || orderSummary.razorpayOrderId,
-                                        date: new Date(),
-                                        items: orderSummary.items,
-                                        amount: orderSummary.totalAmount,
-                                        deliveryFee: orderSummary.deliveryCost,
-                                        address: address
-                                    };
-                                    
-                                    const fileName = generateInvoicePDF(
-                                        orderForPDF,
-                                        user,
-                                        response.razorpay_payment_id
-                                    );
-                                    
-                                    toast.success(`Invoice downloaded: ${fileName}`);
-                                } catch (pdfError) {
-                                    console.error("PDF generation error:", pdfError);
-                                    toast.error("Invoice could not be generated, but order was successful");
-                                }
-                                
-                                navigate("/my-orders");
-                            } else {
-                                toast.error(data.message);
+                handler: async (response) => {
+                    try {
+                        const { data } = await axios.post(
+                            "/api/order/online",
+                            {
+                                userId: user._id,
+                                items: orderItems,
+                                address: address._id,
+                                paymentDetails: {
+                                    razorpay_payment_id: response.razorpay_payment_id,
+                                    razorpay_order_id: response.razorpay_order_id,
+                                    razorpay_signature: response.razorpay_signature,
+                                },
                             }
-                        } catch (error) {
-                            toast.error(error.message);
+                        );
+
+                        if (data.success) {
+                            // Clear cart on successful order
+                            await clearCart();
+
+                            toast.success(data.message);
+
+                            // Generate and download invoice PDF
+                            try {
+                                const orderForPDF = {
+                                    _id: data.orderId || orderSummary.razorpayOrderId,
+                                    date: new Date(),
+                                    items: orderSummary.items,
+                                    amount: orderSummary.totalAmount,
+                                    deliveryFee: orderSummary.deliveryCost,
+                                    address: address
+                                };
+
+                                const fileName = generateInvoicePDF(
+                                    orderForPDF,
+                                    user,
+                                    response.razorpay_payment_id
+                                );
+
+                                toast.success(`Invoice downloaded: ${fileName}`);
+                            } catch (pdfError) {
+                                console.error("PDF generation error:", pdfError);
+                                toast.error("Invoice could not be generated, but order was successful");
+                            }
+
+                            navigate("/my-orders");
+                        } else {
+                            toast.error(data.message);
                         }
-                    },
-                    prefill: {
-                        name: user.name,
-                        email: user.email,
-                    },
-                    theme: {
-                        color: "#3399cc",
-                    },
-                };
-                
-                try {
-                    if (!window.Razorpay) {
-                        toast.error("Razorpay library not loaded. Please refresh the page.");
-                        return;
+                    } catch (error) {
+                        toast.error(error.message);
                     }
-                    const rzp1 = new window.Razorpay(options);
-                    rzp1.open();
-                } catch (razorpayError) {
-                    console.error('Razorpay initialization error:', razorpayError);
-                    toast.error("Payment gateway initialization failed. Please try again.");
+                },
+                prefill: {
+                    name: user.name,
+                    email: user.email,
+                },
+                theme: {
+                    color: "#3399cc",
+                },
+            };
+
+            try {
+                if (!window.Razorpay) {
+                    toast.error("Razorpay library not loaded. Please refresh the page.");
+                    return;
                 }
+                const rzp1 = new window.Razorpay(options);
+                rzp1.open();
+            } catch (razorpayError) {
+                console.error('Razorpay initialization error:', razorpayError);
+                toast.error("Payment gateway initialization failed. Please try again.");
+            }
         } catch (error) {
             toast.error(error.response?.data?.message || error.message);
         }
@@ -210,7 +210,7 @@ const Cart = () => {
                             </svg>
                         </button>
                         <h3 className="text-2xl font-semibold mb-4 pr-8">Order Summary</h3>
-                        
+
                         {/* Loading State */}
                         {isLoadingOrder && (
                             <div className="text-center py-8">
@@ -218,7 +218,7 @@ const Cart = () => {
                                 <p className="text-gray-600 mt-2">Calculating order details...</p>
                             </div>
                         )}
-                        
+
                         {/* Order Summary Content */}
                         {!isLoadingOrder && orderSummary && (
                             <>
@@ -276,7 +276,7 @@ const Cart = () => {
                                     </button>
                                     <button
                                         onClick={handleAddressConfirmed}
-                                        className="flex-1 px-4 py-3 bg-primary text-white rounded-md hover:bg-primary-dull transition font-medium"
+                                        className="flex-1 px-4 py-3 bg-tulunad-primary text-white rounded-md hover:bg-orange-800 transition font-medium shadow-md"
                                     >
                                         Confirm & Pay ₹{orderSummary.totalAmount}
                                     </button>
@@ -288,28 +288,28 @@ const Cart = () => {
             )}
 
             <div className="flex-1 max-w-4xl">
-                <h1 className="text-3xl font-medium mb-6">
+                <h1 className="text-3xl font-serif font-medium text-tulunad-secondary mb-6">
                     Shopping Cart{" "}
-                    <span className="text-sm text-primary">
-                        {getCartCount()} Items
+                    <span className="text-sm font-sans text-stone-500 ml-2">
+                        ({getCartCount()} Items)
                     </span>
                 </h1>
 
-                <div className="grid grid-cols-[2fr_1fr_1fr] text-gray-500 text-base font-medium pb-3">
-                    <p className="text-left">Product Details</p>
+                <div className="grid grid-cols-[2fr_1fr_1fr] text-stone-600 text-sm font-medium py-3 border-b border-stone-200 uppercase tracking-wider">
+                    <p className="text-left pl-2">Product Details</p>
                     <p className="text-center">Subtotal</p>
                     <p className="text-center">Action</p>
                 </div>
 
                 {getCartCount() === 0 ? (
-                    <div className="text-center py-16">
-                        <p className="text-gray-500 text-lg mb-4">Your cart is empty</p>
+                    <div className="text-center py-20 bg-stone-50 rounded-lg mt-4 border-2 border-dashed border-stone-200">
+                        <p className="text-stone-500 text-lg mb-4 font-serif italic">Your cart is currently empty</p>
                         <button
                             onClick={() => {
                                 navigate("/products");
                                 scrollTo(0, 0);
                             }}
-                            className="bg-primary text-white px-6 py-3 rounded-md hover:bg-primary-dull transition"
+                            className="bg-tulunad-primary text-white px-8 py-3 rounded-full hover:bg-orange-800 transition shadow-md"
                         >
                             Start Shopping
                         </button>
@@ -327,8 +327,7 @@ const Cart = () => {
                                             <div
                                                 onClick={() => {
                                                     navigate(
-                                                        `/products/${product.category.toLowerCase()}/${
-                                                            product._id
+                                                        `/products/${product.category.toLowerCase()}/${product._id
                                                         }`
                                                     );
                                                     scrollTo(0, 0);
@@ -415,12 +414,12 @@ const Cart = () => {
 
                 <hr className="border-gray-300" />
 
-                <div className="text-gray-500 mt-4 space-y-2">
+                <div className="text-stone-600 mt-4 space-y-2">
                     <p className="flex justify-between">
                         <span>Subtotal</span>
                         <span>Rs.{getTotalCartAmount()}</span>
                     </p>
-                    <p className="flex justify-between text-xs text-gray-400">
+                    <p className="flex justify-between text-xs text-stone-400">
                         <span>Delivery charges</span>
                         <span>Calculated at checkout</span>
                     </p>
@@ -428,7 +427,7 @@ const Cart = () => {
 
                 <button
                     onClick={handleProceedToCheckout}
-                    className="w-full py-3 mt-6 cursor-pointer bg-primary text-white font-medium hover:bg-primary-dull transition"
+                    className="w-full py-3.5 mt-6 cursor-pointer bg-tulunad-primary text-white font-medium hover:bg-orange-800 transition rounded-lg shadow-md hover:shadow-lg"
                 >
                     Proceed to Checkout
                 </button>

@@ -5,84 +5,84 @@ import { assets } from '../assets/assets'
 
 const AllProducts = () => {
 
-    const {products, searchQuery, setSearchQuery } = useAppContext()
-    const [filteredProducts, setFilteredProducts] = useState([])
-    const [localSearchQuery, setLocalSearchQuery] = useState('')
-    const [sortBy, setSortBy] = useState('name')
-    const [categoryFilter, setCategoryFilter] = useState('all')
+  const { products, searchQuery, setSearchQuery } = useAppContext()
+  const [filteredProducts, setFilteredProducts] = useState([])
+  const [localSearchQuery, setLocalSearchQuery] = useState('')
+  const [sortBy, setSortBy] = useState('name')
+  const [categoryFilter, setCategoryFilter] = useState('all')
 
-    // Get unique categories from products
-    const categories = ['all', ...new Set(products.map(product => product.category.toLowerCase()))]
+  // Get unique categories from products
+  const categories = ['all', ...new Set(products.map(product => product.category.toLowerCase()))]
 
-    useEffect(() => {
-        setLocalSearchQuery(searchQuery)
-    }, [searchQuery])
+  useEffect(() => {
+    setLocalSearchQuery(searchQuery)
+  }, [searchQuery])
 
-    useEffect(() => {
-        let filtered = products.filter(product => product.inStock)
+  useEffect(() => {
+    let filtered = products.filter(product => product.inStock)
 
-        // Apply search filter
-        if (localSearchQuery.length > 0) {
-            filtered = filtered.filter(product => 
-                product.name.toLowerCase().includes(localSearchQuery.toLowerCase()) ||
-                product.description?.toLowerCase().includes(localSearchQuery.toLowerCase()) ||
-                product.category.toLowerCase().includes(localSearchQuery.toLowerCase())
-            )
-        }
-
-        // Apply category filter
-        if (categoryFilter !== 'all') {
-            filtered = filtered.filter(product => 
-                product.category.toLowerCase() === categoryFilter
-            )
-        }
-
-        // Apply sorting
-        filtered.sort((a, b) => {
-            switch (sortBy) {
-                case 'name':
-                    return a.name.localeCompare(b.name)
-                case 'price-low':
-                    return a.price - b.price
-                case 'price-high':
-                    return b.price - a.price
-                case 'category':
-                    return a.category.localeCompare(b.category)
-                default:
-                    return 0
-            }
-        })
-
-        setFilteredProducts(filtered)
-    }, [products, localSearchQuery, sortBy, categoryFilter])
-
-    const handleSearchChange = (e) => {
-        const value = e.target.value
-        setLocalSearchQuery(value)
-        setSearchQuery(value)
+    // Apply search filter
+    if (localSearchQuery.length > 0) {
+      filtered = filtered.filter(product =>
+        product.name.toLowerCase().includes(localSearchQuery.toLowerCase()) ||
+        product.description?.toLowerCase().includes(localSearchQuery.toLowerCase()) ||
+        product.category.toLowerCase().includes(localSearchQuery.toLowerCase())
+      )
     }
 
-    const clearSearch = () => {
-        setLocalSearchQuery('')
-        setSearchQuery('')
+    // Apply category filter
+    if (categoryFilter !== 'all') {
+      filtered = filtered.filter(product =>
+        product.category.toLowerCase() === categoryFilter
+      )
     }
 
-    const clearAllFilters = () => {
-        setLocalSearchQuery('')
-        setSearchQuery('')
-        setCategoryFilter('all')
-        setSortBy('name')
-    }
+    // Apply sorting
+    filtered.sort((a, b) => {
+      switch (sortBy) {
+        case 'name':
+          return a.name.localeCompare(b.name)
+        case 'price-low':
+          return a.price - b.price
+        case 'price-high':
+          return b.price - a.price
+        case 'category':
+          return a.category.localeCompare(b.category)
+        default:
+          return 0
+      }
+    })
+
+    setFilteredProducts(filtered)
+  }, [products, localSearchQuery, sortBy, categoryFilter])
+
+  const handleSearchChange = (e) => {
+    const value = e.target.value
+    setLocalSearchQuery(value)
+    setSearchQuery(value)
+  }
+
+  const clearSearch = () => {
+    setLocalSearchQuery('')
+    setSearchQuery('')
+  }
+
+  const clearAllFilters = () => {
+    setLocalSearchQuery('')
+    setSearchQuery('')
+    setCategoryFilter('all')
+    setSortBy('name')
+  }
 
   return (
     <div className='mt-8 flex flex-col'>
       {/* Header */}
       <div className='flex flex-col sm:flex-row sm:items-center sm:justify-between mb-6'>
         <div className='flex flex-col items-start w-max mb-4 sm:mb-0'>
-          <p className='text-2xl font-medium uppercase'>All Products</p>
-          <div className='w-16 h-0.5 bg-primary rounded-full'></div>
+          <p className='text-3xl font-serif font-medium text-tulunad-secondary'>All Collections</p>
+          <div className='w-20 h-1 bg-tulunad-primary rounded-full mt-2'></div>
         </div>
-        
+
         {/* Results count */}
         <div className='text-gray-600 text-sm'>
           {filteredProducts.length} {filteredProducts.length === 1 ? 'product' : 'products'} found
@@ -94,20 +94,20 @@ const AllProducts = () => {
         <div className='grid gap-4 md:grid-cols-3'>
           {/* Search Input */}
           <div className='relative'>
-            <div className='flex items-center gap-2 border border-gray-300 px-3 rounded-md bg-white'>
-              <img src={assets.search_icon} alt='search' className='w-4 h-4 text-gray-400'/>
-              <input 
+            <div className='flex items-center gap-3 border border-stone-200 px-4 py-2 rounded-full bg-white focus-within:border-tulunad-primary focus-within:ring-1 focus-within:ring-tulunad-primary/20 transition-all shadow-sm'>
+              <img src={assets.search_icon} alt='search' className='w-4 h-4 text-tulunad-secondary opacity-60' />
+              <input
                 value={localSearchQuery}
                 onChange={handleSearchChange}
-                className="py-2 flex-1 bg-transparent outline-none placeholder-gray-500" 
-                type="text" 
-                placeholder="Search products, categories..." 
+                className="flex-1 bg-transparent outline-none placeholder-stone-400 text-stone-700 font-sans"
+                type="text"
+                placeholder="Search essentials..."
               />
               {localSearchQuery && (
                 <button
                   type="button"
                   onClick={clearSearch}
-                  className="text-gray-400 hover:text-gray-600 text-lg"
+                  className="text-stone-400 hover:text-tulunad-primary transition-colors"
                 >
                   ×
                 </button>
@@ -150,17 +150,17 @@ const AllProducts = () => {
           <div className='flex items-center justify-between mt-4 pt-4 border-t border-gray-200'>
             <div className='flex items-center gap-2 flex-wrap'>
               {localSearchQuery && (
-                <span className='bg-primary text-white px-3 py-1 rounded-full text-sm'>
+                <span className='bg-tulunad-primary/10 text-tulunad-primary border border-tulunad-primary/20 px-4 py-1.5 rounded-full text-sm font-medium'>
                   Search: "{localSearchQuery}"
                 </span>
               )}
               {categoryFilter !== 'all' && (
-                <span className='bg-primary text-white px-3 py-1 rounded-full text-sm'>
-                  Category: {categoryFilter.charAt(0).toUpperCase() + categoryFilter.slice(1)}
+                <span className='bg-tulunad-secondary/10 text-tulunad-secondary border border-tulunad-secondary/20 px-4 py-1.5 rounded-full text-sm font-medium capitalize'>
+                  {categoryFilter}
                 </span>
               )}
               {sortBy !== 'name' && (
-                <span className='bg-primary text-white px-3 py-1 rounded-full text-sm'>
+                <span className='bg-tulunad-accent/10 text-tulunad-secondary border border-tulunad-accent/30 px-4 py-1.5 rounded-full text-sm font-medium'>
                   Sort: {sortBy}
                 </span>
               )}
@@ -177,10 +177,12 @@ const AllProducts = () => {
 
       {/* Products Grid */}
       {filteredProducts.length > 0 ? (
-        <div className='grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3 md:gap-6 lg:grid-cols-5'>
-           {filteredProducts.map((product, index)=>(
-            <ProductCard key={index} product={product}/>
-           ))}
+        <div className='grid grid-cols-[repeat(auto-fill,minmax(240px,1fr))] gap-6'>
+          {filteredProducts.map((product, index) => (
+            <div key={index} className="flex justify-center">
+              <ProductCard product={product} />
+            </div>
+          ))}
         </div>
       ) : (
         <div className='text-center py-16'>
