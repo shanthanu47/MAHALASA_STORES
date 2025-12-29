@@ -4,7 +4,7 @@ import nodemailer from 'nodemailer';
 const createTransporter = () => {
     // For Gmail, you'll need to use App Password instead of regular password
     // Go to Google Account Settings > Security > 2-Step Verification > App Passwords
-    return nodemailer.createTransporter({
+    return nodemailer.createTransport({
         service: 'gmail',
         auth: {
             user: process.env.EMAIL_USER, // Your Gmail address
@@ -110,5 +110,49 @@ export const sendContactEmail = async (contactData) => {
     } catch (error) {
         console.error('Email sending error:', error);
         return { success: false, message: 'Failed to send email', error: error.message };
+    }
+};
+
+export const sendResetOtpEmail = async (email, otp) => {
+    const transporter = createTransporter();
+
+    const mailOptions = {
+        from: process.env.EMAIL_USER,
+        to: email,
+        subject: 'Password Reset OTP - Mahalasa Stores',
+        html: `
+            <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; border: 1px solid #e5e7eb; border-radius: 8px; overflow: hidden;">
+                <div style="background-color: #4ade80; color: white; padding: 20px; text-align: center;">
+                    <h1>Password Reset</h1>
+                    <p>Mahalasa Stores</p>
+                </div>
+                
+                <div style="padding: 30px; background-color: white; text-align: center;">
+                    <p style="font-size: 16px; color: #374151; margin-bottom: 20px;">
+                        We received a request to reset your password. Use the OTP below to proceed:
+                    </p>
+                    
+                    <div style="background-color: #f3f4f6; padding: 20px; border-radius: 8px; display: inline-block; margin: 10px 0;">
+                        <span style="font-size: 32px; font-weight: bold; letter-spacing: 5px; color: #111827;">${otp}</span>
+                    </div>
+                    
+                    <p style="font-size: 14px; color: #6b7280; margin-top: 20px;">
+                        This OTP is valid for 15 minutes. If you didn't request this, please ignore this email.
+                    </p>
+                </div>
+                
+                <div style="background-color: #f9fafb; color: #9ca3af; padding: 15px; text-align: center; font-size: 12px; border-top: 1px solid #eeeff2;">
+                    <p>&copy; ${new Date().getFullYear()} Mahalasa Stores. All rights reserved.</p>
+                </div>
+            </div>
+        `
+    };
+
+    try {
+        await transporter.sendMail(mailOptions);
+        return { success: true };
+    } catch (error) {
+        console.error('OTP Email error:', error);
+        return { success: false, error: error.message };
     }
 };

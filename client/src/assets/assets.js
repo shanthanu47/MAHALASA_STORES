@@ -192,8 +192,8 @@ export const footerLinks = [
 export const features = [
   {
     icon: delivery_truck_icon,
-    title: "Fastest Delivery",
-    description: "Groceries delivered in under 30 minutes.",
+    title: "Within Week Delivery",
+    description: "Groceries delivered to your doorstep within a week.",
   },
   {
     icon: leaf_icon,
@@ -207,8 +207,8 @@ export const features = [
   },
   {
     icon: trust_icon,
-    title: "Trusted by Thousands",
-    description: "Loved by 10,000+ happy customers.",
+    title: "Trusted by GSB People",
+    description: "Loved by the community.",
   },
 ];
 
